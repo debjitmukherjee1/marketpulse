@@ -117,15 +117,15 @@
         <li><strong>Index Monitor</strong> — latest level, today's move, and year-to-date change for fifteen world indices, plus a price-history chart. "Compare all (rebased to 100)" normalizes every index to a common starting point so relative performance is directly comparable.</li>
         <li><strong>Monte Carlo Simulator</strong> — projects an index forward using Geometric Brownian Motion:</li>
       </ol>
-      <pre class="formula">S(t+1) = S(t) · exp( (μ − ½σ²)·dt + σ·√dt·Z ),   Z ~ N(0,1),  dt = 1/252</pre>
-      <p><strong>μ</strong> (annual drift) and <strong>σ</strong> (annual volatility) are calibrated from each index's trailing one year of daily log-returns — recomputed every day. The simulator draws hundreds to thousands of independent paths, then reports the <strong>median</strong> outcome, the <strong>5th-percentile</strong> level (a Value-at-Risk style downside), the <strong>95th percentile</strong>, and <strong>P(loss)</strong> — the share of paths ending below today's level.</p>
+      <pre class="formula">S(t+1) = S(t) · exp( μ·dt + σ·√dt·Z ),   Z ~ N(0,1),  dt = 1/252</pre>
+      <p><strong>μ</strong> (the annualized mean of daily log-returns) and <strong>σ</strong> (annualized volatility) are calibrated from each index's trailing one year of daily log-returns — recomputed every day. Because μ is measured directly from log-returns, it already reflects the usual GBM variance drag (μ = true annual growth rate − ½σ²), so no further adjustment is applied per step. The simulator draws hundreds to thousands of independent paths, then reports the <strong>median</strong> outcome, the <strong>5th-percentile</strong> level (a Value-at-Risk style downside), the <strong>95th percentile</strong>, and <strong>P(loss)</strong> — the share of paths ending below today's level.</p>
       <p class="muted small">GBM assumes constant drift/volatility and normally-distributed returns. Real markets have fat tails, regime shifts, and jumps, so treat the bands as a calibrated illustration of dispersion — not a prediction.</p>
       <p class="disclaimer">⚠ Educational / research instrument. Index data refreshes daily, not in real time; the source is an unofficial free endpoint. Simulations are illustrative. <strong>Not financial advice.</strong></p>
     </section>
   </main>
 
   <footer>
-    <p>MarketPulse · built by Debjit Mukherjee · <a href="https://github.com/" target="_blank" rel="noopener">Source on GitHub</a><br>
+    <p>MarketPulse · built by Debjit Mukherjee · <a href="https://github.com/debjitmukherjee1/marketpulse" target="_blank" rel="noopener">Source on GitHub</a><br>
     Data: Yahoo Finance (no key) · Hosting: GitHub Pages · Simulation runs in-browser — no live server, no per-visitor cost.</p>
   </footer>
 

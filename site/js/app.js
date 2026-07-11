@@ -43,7 +43,9 @@ const cls = n => n > 0.001 ? "pos" : n < -0.001 ? "neg" : "flat";
 
 async function getIndex(code) {
   if (state.cache[code]) return state.cache[code];
-  const data = await fetch(`data/indices/${code}.json`).then(r => r.json());
+  const res = await fetch(`data/indices/${code}.json`);
+  if (!res.ok) throw new Error(`Failed to load ${code} (HTTP ${res.status})`);
+  const data = await res.json();
   state.cache[code] = data;
   return data;
 }
@@ -58,7 +60,9 @@ function renderCards() {
     el.style.setProperty("--i", i);
     el.dataset.code = c.code;
     el.innerHTML = `
-      <div class="index-name">${c.name} <span class="index-country">· ${c.country}</span></div>
+      <div class="index-name">${c.name} <span class="index-country">· ${c.country}</span>${
+        c.source === "stale" ? ' <span class="small muted">· stale</span>' : ""
+      }</div>
       <div class="index-level">${fmtNum(c.level)}</div>
       <div class="index-changes">
         <span class="${cls(c.change_today)}">${pct(c.change_today)}</span> today
@@ -84,39 +88,57 @@ function sliceByRange(series, days) {
 
 async function loadPriceChart() {
   if (state.compare) return loadCompareChart();
-  const idx = await getIndex(state.selected);
-  const s = sliceByRange(idx.series, state.range);
-  document.getElementById("chart-title").textContent = `${idx.name} — Price History`;
-  drawPrice({
-    labels: s.map(p => p.d),
-    datasets: [{
-      label: idx.name,
-      data: s.map(p => p.c),
-      borderColor: "var(--accent)",
-      backgroundColor: "rgba(156,107,46,.12)",
-      borderWidth: 2, fill: true, pointRadius: 0, tension: .12,
-    }]
-  }, false);
+  try {
+    const idx = await getIndex(state.selected);
+    const s = sliceByRange(idx.series, state.range);
+    document.getElementById("chart-title").textContent = `${idx.name} — Price History`;
+    drawPrice({
+      labels: s.map(p => p.d),
+      datasets: [{
+        label: idx.name,
+        data: s.map(p => p.c),
+        borderColor: "var(--accent)",
+        backgroundColor: "rgba(156,107,46,.12)",
+        borderWidth: 2, fill: true, pointRadius: 0, tension: .12,
+      }]
+    }, false);
+  } catch (e) {
+    console.error(e);
+    document.getElementById("chart-title").textContent = "Could not load price history";
+  }
 }
 
 async function loadCompareChart() {
   document.getElementById("chart-title").textContent = "All Indices — rebased to 100";
-  const all = await Promise.all(state.manifest.indices.map(m => getIndex(m.code)));
-  const datasets = all.map((idx, i) => {
-    const s = sliceByRange(idx.series, state.range);
-    const base = s[0] ? s[0].c : 1;
-    return {
-      label: idx.name,
-      data: s.map(p => +(p.c / base * 100).toFixed(2)),
-      borderColor: PALETTE[i % PALETTE.length],
-      borderWidth: 1.4, fill: false, pointRadius: 0, tension: .12,
-    };
-  });
-  // use the longest label set for the x axis
-  const longest = all.reduce((a, b) =>
-    sliceByRange(b.series, state.range).length > a.length
-      ? sliceByRange(b.series, state.range).map(p => p.d) : a, []);
-  drawPrice({ labels: longest, datasets }, true);
+  try {
+    const all = await Promise.all(state.manifest.indices.map(m => getIndex(m.code)));
+    const sliced = all.map(idx => sliceByRange(idx.series, state.range));
+
+    // Different markets close on different calendar days (national holidays),
+    // so trading-day counts differ across indices. Align every dataset to the
+    // union of dates seen across all of them, rather than plotting each
+    // dataset positionally against a single "longest" label set — otherwise
+    // shorter series silently shift onto the wrong dates.
+    const dateSet = new Set();
+    sliced.forEach(s => s.forEach(p => dateSet.add(p.d)));
+    const labels = Array.from(dateSet).sort();
+
+    const datasets = sliced.map((s, i) => {
+      const base = s[0] ? s[0].c : 1;
+      const byDate = new Map(s.map(p => [p.d, p.c]));
+      return {
+        label: all[i].name,
+        data: labels.map(d => byDate.has(d) ? +(byDate.get(d) / base * 100).toFixed(2) : null),
+        spanGaps: true,
+        borderColor: PALETTE[i % PALETTE.length],
+        borderWidth: 1.4, fill: false, pointRadius: 0, tension: .12,
+      };
+    });
+    drawPrice({ labels, datasets }, true);
+  } catch (e) {
+    console.error(e);
+    document.getElementById("chart-title").textContent = "Could not load comparison data";
+  }
 }
 
 function drawPrice(data, showLegend) {
@@ -156,7 +178,10 @@ function quantile(sortedArr, q) {
 function simulate(spot, mu, sigma, years, paths) {
   const steps = Math.max(2, Math.round(years * 252));
   const dt = 1 / 252;
-  const drift = (mu - 0.5 * sigma * sigma) * dt;
+  // mu is already the annualized MEAN of daily log-returns (see run_all.py
+  // _calibrate), which by the GBM identity already equals (true_drift - 1/2 sigma^2).
+  // Do not subtract 1/2 sigma^2 again here, or drift is biased low by that amount.
+  const drift = mu * dt;
   const vol = sigma * Math.sqrt(dt);
 
   const matrix = new Array(paths);
@@ -190,19 +215,24 @@ async function runSimulation() {
   const code = document.getElementById("sim-index").value;
   const years = parseFloat(document.getElementById("sim-horizon").value);
   const paths = parseInt(document.getElementById("sim-paths").value, 10);
-  const idx = await getIndex(code);
-  const { mu, sigma } = idx.calibration;
-  const spot = idx.level;
-
   const btn = document.getElementById("run-sim");
   btn.textContent = "Running…"; btn.disabled = true;
-  // let the button repaint before the heavy loop
-  await new Promise(r => setTimeout(r, 20));
-  const res = simulate(spot, mu, sigma, years, paths);
-  btn.textContent = "Run simulation"; btn.disabled = false;
-
-  drawSim(res, idx);
-  renderSimStats(res, idx, mu, sigma);
+  try {
+    const idx = await getIndex(code);
+    const { mu, sigma } = idx.calibration;
+    const spot = idx.level;
+    // let the button repaint before the heavy loop
+    await new Promise(r => setTimeout(r, 20));
+    const res = simulate(spot, mu, sigma, years, paths);
+    drawSim(res, idx);
+    renderSimStats(res, idx, mu, sigma);
+  } catch (e) {
+    console.error(e);
+    document.getElementById("sim-stats").innerHTML =
+      "<p class='muted'>Could not run simulation — failed to load index data.</p>";
+  } finally {
+    btn.textContent = "Run simulation"; btn.disabled = false;
+  }
 }
 
 function drawSim(res, idx) {

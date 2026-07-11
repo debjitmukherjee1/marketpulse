@@ -66,10 +66,10 @@ def _live_series(symbol):
 
 
 def fetch_series(symbol):
+    """Raises on a live-fetch failure — the caller decides the fallback
+    (reuse yesterday's committed JSON if one exists, else bootstrap mock),
+    so a Yahoo outage can never silently overwrite real data with fabricated
+    numbers with no trace of what happened."""
     if config.MOCK_MODE:
         return _mock_series(symbol)
-    try:
-        return _live_series(symbol)
-    except Exception as e:
-        print(f"[indices] {symbol} live fetch failed ({e}); mock fallback")
-        return _mock_series(symbol)
+    return _live_series(symbol)

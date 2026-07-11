@@ -70,13 +70,13 @@ Yahoo ─▶│  fetch_indices.py → daily closes per index   │
 Geometric Brownian Motion, one step per trading day:
 
 ```
-S(t+1) = S(t) · exp( (μ − ½σ²)·dt + σ·√dt·Z ),   Z ~ N(0,1),  dt = 1/252
+S(t+1) = S(t) · exp( μ·dt + σ·√dt·Z ),   Z ~ N(0,1),  dt = 1/252
 ```
 
-- **μ, σ** are the **annualized** mean and standard deviation of the index's trailing ~252 daily log-returns, recomputed every day by `run_all.py` (`_calibrate`).
+- **μ, σ** are the **annualized** mean and standard deviation of the index's trailing ~252 daily log-returns, recomputed every day by `run_all.py` (`_calibrate`). Because μ is the mean of *log*-returns, it already equals `(true annual growth rate − ½σ²)` by the GBM identity — the per-step drift is `μ·dt` directly, with no further `−½σ²` adjustment (an earlier build subtracted it a second time in the browser, biasing every simulation low; fixed).
 - The browser draws `paths` independent trajectories, then at each step takes the 5th / 50th / 95th percentiles → the bands.
 - **Reported stats:** median outcome, 5% VaR level (5th-percentile terminal value), 95th percentile, and P(loss) = share of paths ending below spot.
-- **Verified:** the simulated terminal median matches the closed-form lognormal median `S·exp((μ−½σ²)T)` within ~3%, percentile ordering always holds, and P(loss) ∈ [0,1]. 1000 paths × 1 year runs in tens of milliseconds.
+- **Verified:** the simulated terminal median matches the closed-form lognormal median `S·exp(μ·T)` within ~1-2% (Monte Carlo sampling noise), percentile ordering always holds, and P(loss) ∈ [0,1]. 1000 paths × 1 year runs in tens of milliseconds.
 
 **Honest limits (stated on the Methodology tab):** GBM assumes constant μ/σ and normal returns; real markets have fat tails and regime shifts. The bands are a calibrated illustration of dispersion, **not a forecast**.
 
@@ -117,7 +117,11 @@ marketpulse/
 │   ├── run_all.py               ← calibrate + write JSON
 │   ├── requirements.txt
 │   └── SOURCES.md
-├── .github/workflows/daily-update.yml
+├── .github/workflows/
+│   ├── daily-update.yml         ← cron: fetch + calibrate + commit site/data
+│   └── pages.yml                ← deploys site/ via GitHub Actions (Pages'
+│                                    branch-deploy only supports / or /docs,
+│                                    not /site, so this uses upload-pages-artifact)
 └── README.md
 ```
 

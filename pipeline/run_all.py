@@ -81,30 +81,57 @@ def main():
     summary = {"updated_at": updated, "cards": []}
 
     for symbol, name, country in config.INDICES:
-        dates, closes = fetch_indices.fetch_series(symbol)
-        if len(closes) < 30:
-            print(f"  ! {symbol}: too few points, skipping")
-            continue
         code = _safe_code(symbol)
+        prev_path = os.path.join(idx_dir, f"{code}.json")
+        source = "mock" if config.MOCK_MODE else "live"
+
+        try:
+            dates, closes = fetch_indices.fetch_series(symbol)
+            if len(closes) < 30:
+                raise ValueError(f"too few points ({len(closes)})")
+        except Exception as e:
+            # Live fetch failed (or returned too little data): keep yesterday's
+            # committed JSON rather than silently overwriting real numbers with
+            # a fabricated mock series. Only bootstrap with mock if there is no
+            # prior file yet (e.g. very first run).
+            if os.path.exists(prev_path):
+                print(f"  ! {symbol}: fetch failed ({e}); keeping previous data, marked stale")
+                with open(prev_path) as f:
+                    prev = json.load(f)
+                prev["source"] = "stale"
+                with open(prev_path, "w") as f:
+                    json.dump(prev, f, separators=(",", ":"))
+                manifest["indices"].append({"code": code, "name": name, "country": country})
+                summary["cards"].append({
+                    "code": code, "name": prev["name"], "country": prev["country"],
+                    "level": prev["level"], "change_today": prev["change_today"], "ytd": prev["ytd"],
+                    "mu": prev["calibration"]["mu"], "sigma": prev["calibration"]["sigma"],
+                    "source": "stale",
+                })
+                continue
+            print(f"  ! {symbol}: fetch failed ({e}); no previous data, bootstrapping with mock")
+            dates, closes = fetch_indices._mock_series(symbol)
+            source = "mock"
+
         level = closes[-1]
         change_today = round((closes[-1] / closes[-2] - 1) * 100, 2)
         ytd = _ytd_pct(dates, closes)
         mu, sigma = _calibrate(closes)
 
         series = [{"d": d, "c": c} for d, c in zip(dates, closes)]
-        with open(os.path.join(idx_dir, f"{code}.json"), "w") as f:
+        with open(prev_path, "w") as f:
             json.dump({
                 "code": code, "symbol": symbol, "name": name, "country": country,
                 "level": level, "change_today": change_today, "ytd": ytd,
                 "calibration": {"mu": mu, "sigma": sigma},
-                "series": series,
+                "series": series, "source": source,
             }, f, separators=(",", ":"))
 
         manifest["indices"].append({"code": code, "name": name, "country": country})
         summary["cards"].append({
             "code": code, "name": name, "country": country,
             "level": level, "change_today": change_today, "ytd": ytd,
-            "mu": mu, "sigma": sigma,
+            "mu": mu, "sigma": sigma, "source": source,
         })
         print(f"  {name:22s} {level:>12,.2f}  today {change_today:+.2f}%  ytd {ytd:+.2f}%  "
               f"mu {mu:+.1%} sigma {sigma:.1%}")
