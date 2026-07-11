@@ -30,7 +30,7 @@ INDICES = [
 ]
 
 # --- History window --------------------------------------------------------
-HISTORY_DAYS = 550          # ~18 months of daily closes (covers "Max" + YTD)
+HISTORY_DAYS = 550          # ~2.1yr of trading-day closes (covers "Max" + YTD)
 TRADING_DAYS_YEAR = 252     # for annualizing drift/vol (Monte Carlo calibration)
 
 # --- Output ----------------------------------------------------------------
