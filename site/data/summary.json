@@ -1,155 +1,155 @@
 {
-  "updated_at": "11 Jul 2026 14:48 UTC",
+  "updated_at": "11 Jul 2026 15:09 UTC",
   "cards": [
     {
       "code": "GSPC",
       "name": "S&P 500",
       "country": "United States",
-      "level": 8130.83,
-      "change_today": 1.25,
-      "ytd": -16.03,
-      "mu": -0.3538,
-      "sigma": 0.2485
+      "level": 7575.39,
+      "change_today": 0.42,
+      "ytd": 10.66,
+      "mu": 0.1902,
+      "sigma": 0.1253
     },
     {
       "code": "IXIC",
       "name": "Nasdaq Composite",
       "country": "United States",
-      "level": 53040.8,
-      "change_today": -0.48,
-      "ytd": 19.28,
-      "mu": 0.1998,
-      "sigma": 0.169
+      "level": 26281.61,
+      "change_today": 0.29,
+      "ytd": 13.08,
+      "mu": 0.243,
+      "sigma": 0.1773
     },
     {
       "code": "DJI",
       "name": "Dow Jones Industrial",
       "country": "United States",
-      "level": 34707.33,
-      "change_today": -0.09,
-      "ytd": -7.49,
-      "mu": -0.1191,
-      "sigma": 0.1899
+      "level": 52637.01,
+      "change_today": 0.29,
+      "ytd": 9.52,
+      "mu": 0.1689,
+      "sigma": 0.1233
     },
     {
       "code": "FTSE",
       "name": "FTSE 100",
       "country": "United Kingdom",
-      "level": 8109.92,
-      "change_today": -0.44,
-      "ytd": -4.11,
-      "mu": -0.0043,
-      "sigma": 0.1119
+      "level": 10497.3,
+      "change_today": 0.24,
+      "ytd": 5.7,
+      "mu": 0.1605,
+      "sigma": 0.1132
     },
     {
       "code": "GDAXI",
       "name": "DAX 40",
       "country": "Germany",
-      "level": 20408.12,
-      "change_today": 0.58,
-      "ytd": 4.04,
-      "mu": -0.116,
-      "sigma": 0.2173
+      "level": 25067.09,
+      "change_today": -0.2,
+      "ytd": 2.35,
+      "mu": 0.0329,
+      "sigma": 0.162
     },
     {
       "code": "FCHI",
       "name": "CAC 40",
       "country": "France",
-      "level": 19516.6,
-      "change_today": 1.1,
-      "ytd": 6.31,
-      "mu": 0.2732,
-      "sigma": 0.1941
+      "level": 8338.97,
+      "change_today": 0.15,
+      "ytd": 2.32,
+      "mu": 0.0712,
+      "sigma": 0.1433
     },
     {
       "code": "STOXX50E",
       "name": "Euro Stoxx 50",
       "country": "Europe",
-      "level": 5484.64,
-      "change_today": 1.09,
-      "ytd": 8.48,
-      "mu": 0.0665,
-      "sigma": 0.1103
+      "level": 6269.97,
+      "change_today": -0.23,
+      "ytd": 8.17,
+      "mu": 0.1603,
+      "sigma": 0.1547
     },
     {
       "code": "N225",
       "name": "Nikkei 225",
       "country": "Japan",
-      "level": 51374.43,
-      "change_today": 0.74,
-      "ytd": 3.93,
-      "mu": 0.0792,
-      "sigma": 0.1375
+      "level": 68557.73,
+      "change_today": 1.2,
+      "ytd": 36.19,
+      "mu": 0.535,
+      "sigma": 0.2661
     },
     {
       "code": "HSI",
       "name": "Hang Seng",
       "country": "Hong Kong",
-      "level": 27689.83,
-      "change_today": -0.44,
-      "ytd": 0.37,
-      "mu": 0.071,
-      "sigma": 0.1443
+      "level": 24175.12,
+      "change_today": 0.6,
+      "ytd": -5.68,
+      "mu": 0.0043,
+      "sigma": 0.1876
     },
     {
       "code": "000001_SS",
       "name": "Shanghai Composite",
       "country": "China",
-      "level": 4062.97,
-      "change_today": -1.8,
-      "ytd": 12.11,
-      "mu": 0.2109,
-      "sigma": 0.1833
+      "level": 3996.16,
+      "change_today": -1.0,
+      "ytd": 0.69,
+      "mu": 0.1474,
+      "sigma": 0.1338
     },
     {
       "code": "KS11",
       "name": "KOSPI",
       "country": "South Korea",
-      "level": 3419.79,
-      "change_today": 0.16,
-      "ytd": 2.45,
-      "mu": 0.0364,
-      "sigma": 0.2208
+      "level": 7475.94,
+      "change_today": 2.52,
+      "ytd": 77.4,
+      "mu": 0.8895,
+      "sigma": 0.4431
     },
     {
       "code": "AXJO",
       "name": "S&P/ASX 200",
       "country": "Australia",
-      "level": 12382.66,
-      "change_today": -0.4,
-      "ytd": 12.73,
-      "mu": 0.2487,
-      "sigma": 0.1245
+      "level": 8806.0,
+      "change_today": 0.5,
+      "ytd": 1.05,
+      "mu": 0.0271,
+      "sigma": 0.1242
     },
     {
       "code": "GSPTSE",
       "name": "S&P/TSX Composite",
       "country": "Canada",
-      "level": 26109.07,
-      "change_today": -0.9,
-      "ytd": -4.4,
-      "mu": 0.0039,
-      "sigma": 0.1426
+      "level": 35305.3,
+      "change_today": 0.3,
+      "ytd": 11.33,
+      "mu": 0.2692,
+      "sigma": 0.1316
     },
     {
       "code": "NSEI",
       "name": "Nifty 50",
       "country": "India",
-      "level": 17849.05,
-      "change_today": -2.47,
-      "ytd": -5.14,
-      "mu": 0.0236,
-      "sigma": 0.2404
+      "level": 24206.9,
+      "change_today": 1.02,
+      "ytd": -7.36,
+      "mu": -0.0537,
+      "sigma": 0.1306
     },
     {
       "code": "BSESN",
       "name": "BSE Sensex",
       "country": "India",
-      "level": 56064.72,
-      "change_today": -0.21,
-      "ytd": -1.73,
-      "mu": -0.0449,
-      "sigma": 0.1431
+      "level": 77569.39,
+      "change_today": 1.08,
+      "ytd": -8.98,
+      "mu": -0.076,
+      "sigma": 0.1328
     }
   ]
 }
