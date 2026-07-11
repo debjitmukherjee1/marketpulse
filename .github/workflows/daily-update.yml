@@ -30,5 +30,5 @@ jobs:
           git config user.name "marketpulse-bot"
           git config user.email "actions@github.com"
           git add site/data
-          git diff --staged --quiet || git commit -m "chore: daily index refresh [skip ci]"
+          git diff --staged --quiet || git commit -m "chore: daily index refresh"
           git push
