@@ -1,0 +1,122 @@
+"""
+run_all.py — builds site/data for MarketPulse.
+
+For each index it computes, from the daily closes:
+  - level        : latest close
+  - change_today : latest vs previous close (%)
+  - ytd          : latest vs last close of the prior calendar year (%)
+  - mu, sigma    : ANNUALIZED trailing-1yr log-return drift & volatility
+                   (these calibrate the in-browser Monte Carlo simulator)
+and trims the history the frontend charts.
+
+Writes:
+  site/data/manifest.json          -> index list + updated_at
+  site/data/indices/<CODE>.json    -> {meta, series[], calibration}
+  site/data/summary.json           -> compact cards payload for the monitor
+
+Usage:  python run_all.py            (mock, offline)
+        MARKETPULSE_LIVE=1 python run_all.py   (live, Yahoo)
+"""
+import json
+import math
+import os
+import re
+from datetime import datetime, timezone
+
+import config
+import fetch_indices
+
+
+def _safe_code(symbol):
+    """Filesystem/URL-safe id from a Yahoo symbol, e.g. ^GSPC -> GSPC, 000001.SS."""
+    return re.sub(r"[^A-Za-z0-9]", "_", symbol).strip("_")
+
+
+def _log_returns(closes):
+    out = []
+    for i in range(1, len(closes)):
+        if closes[i - 1] > 0 and closes[i] > 0:
+            out.append(math.log(closes[i] / closes[i - 1]))
+    return out
+
+
+def _calibrate(closes):
+    """Annualized drift (mu) and volatility (sigma) from trailing ~1yr."""
+    window = closes[-(config.TRADING_DAYS_YEAR + 1):]
+    r = _log_returns(window)
+    if len(r) < 2:
+        return 0.0, 0.15
+    mean = sum(r) / len(r)
+    var = sum((x - mean) ** 2 for x in r) / (len(r) - 1)
+    sd = math.sqrt(var)
+    mu = mean * config.TRADING_DAYS_YEAR
+    sigma = sd * math.sqrt(config.TRADING_DAYS_YEAR)
+    return round(mu, 4), round(sigma, 4)
+
+
+def _ytd_pct(dates, closes):
+    latest = closes[-1]
+    this_year = datetime.fromisoformat(dates[-1]).year
+    # last close of the previous calendar year = baseline
+    baseline = None
+    for d, c in zip(dates, closes):
+        if datetime.fromisoformat(d).year < this_year:
+            baseline = c
+        else:
+            break
+    if baseline is None:
+        baseline = closes[0]
+    return round((latest / baseline - 1) * 100, 2)
+
+
+def main():
+    mode = "MOCK" if config.MOCK_MODE else "LIVE"
+    print(f"=== MarketPulse pipeline ({mode}) ===")
+    updated = datetime.now(timezone.utc).strftime("%d %b %Y %H:%M UTC")
+
+    idx_dir = os.path.join(config.DATA_DIR, "indices")
+    os.makedirs(idx_dir, exist_ok=True)
+
+    manifest = {"updated_at": updated, "indices": []}
+    summary = {"updated_at": updated, "cards": []}
+
+    for symbol, name, country in config.INDICES:
+        dates, closes = fetch_indices.fetch_series(symbol)
+        if len(closes) < 30:
+            print(f"  ! {symbol}: too few points, skipping")
+            continue
+        code = _safe_code(symbol)
+        level = closes[-1]
+        change_today = round((closes[-1] / closes[-2] - 1) * 100, 2)
+        ytd = _ytd_pct(dates, closes)
+        mu, sigma = _calibrate(closes)
+
+        series = [{"d": d, "c": c} for d, c in zip(dates, closes)]
+        with open(os.path.join(idx_dir, f"{code}.json"), "w") as f:
+            json.dump({
+                "code": code, "symbol": symbol, "name": name, "country": country,
+                "level": level, "change_today": change_today, "ytd": ytd,
+                "calibration": {"mu": mu, "sigma": sigma},
+                "series": series,
+            }, f, separators=(",", ":"))
+
+        manifest["indices"].append({"code": code, "name": name, "country": country})
+        summary["cards"].append({
+            "code": code, "name": name, "country": country,
+            "level": level, "change_today": change_today, "ytd": ytd,
+            "mu": mu, "sigma": sigma,
+        })
+        print(f"  {name:22s} {level:>12,.2f}  today {change_today:+.2f}%  ytd {ytd:+.2f}%  "
+              f"mu {mu:+.1%} sigma {sigma:.1%}")
+
+    os.makedirs(config.DATA_DIR, exist_ok=True)
+    with open(os.path.join(config.DATA_DIR, "manifest.json"), "w") as f:
+        json.dump(manifest, f, indent=2)
+    with open(os.path.join(config.DATA_DIR, "summary.json"), "w") as f:
+        json.dump(summary, f, indent=2)
+
+    print(f"Wrote {len(manifest['indices'])} indices -> {os.path.normpath(config.DATA_DIR)}")
+
+
+if __name__ == "__main__":
+    main()

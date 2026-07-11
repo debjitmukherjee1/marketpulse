@@ -1,0 +1,80 @@
+{
+  "updated_at": "11 Jul 2026 14:48 UTC",
+  "indices": [
+    {
+      "code": "GSPC",
+      "name": "S&P 500",
+      "country": "United States"
+    },
+    {
+      "code": "IXIC",
+      "name": "Nasdaq Composite",
+      "country": "United States"
+    },
+    {
+      "code": "DJI",
+      "name": "Dow Jones Industrial",
+      "country": "United States"
+    },
+    {
+      "code": "FTSE",
+      "name": "FTSE 100",
+      "country": "United Kingdom"
+    },
+    {
+      "code": "GDAXI",
+      "name": "DAX 40",
+      "country": "Germany"
+    },
+    {
+      "code": "FCHI",
+      "name": "CAC 40",
+      "country": "France"
+    },
+    {
+      "code": "STOXX50E",
+      "name": "Euro Stoxx 50",
+      "country": "Europe"
+    },
+    {
+      "code": "N225",
+      "name": "Nikkei 225",
+      "country": "Japan"
+    },
+    {
+      "code": "HSI",
+      "name": "Hang Seng",
+      "country": "Hong Kong"
+    },
+    {
+      "code": "000001_SS",
+      "name": "Shanghai Composite",
+      "country": "China"
+    },
+    {
+      "code": "KS11",
+      "name": "KOSPI",
+      "country": "South Korea"
+    },
+    {
+      "code": "AXJO",
+      "name": "S&P/ASX 200",
+      "country": "Australia"
+    },
+    {
+      "code": "GSPTSE",
+      "name": "S&P/TSX Composite",
+      "country": "Canada"
+    },
+    {
+      "code": "NSEI",
+      "name": "Nifty 50",
+      "country": "India"
+    },
+    {
+      "code": "BSESN",
+      "name": "BSE Sensex",
+      "country": "India"
+    }
+  ]
+}

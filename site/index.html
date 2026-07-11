@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPulse — Global Index Monitor &amp; Simulator</title>
+  <meta name="description" content="A global index monitor and Monte Carlo market simulator. Fifteen indices, price history, and calibrated GBM projections — updated daily, runs free." />
+  <meta property="og:title" content="MarketPulse — Global Index Monitor & Simulator" />
+  <meta property="og:description" content="Fifteen world indices, price history, and a live Monte Carlo simulator. Updated daily." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="monogram" viewBox="0 0 48 48" width="46" height="46" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5" />
+        <polyline points="9,30 17,30 21,18 27,34 31,24 39,24" fill="none"
+                  stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="brand-text">
+        <h1>Market<span class="pulse">Pulse</span></h1>
+        <p class="tagline">Global index monitor &amp; Monte Carlo simulator.</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="updated">Last updated <span id="updated-at">—</span></div>
+      <div class="run-note">refreshed daily via <code>GitHub Actions</code> · no server</div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <span class="tab-indicator" id="tab-indicator"></span>
+    <button class="tab active" data-tab="overview">Index Monitor</button>
+    <button class="tab" data-tab="simulator">Monte Carlo Simulator</button>
+    <button class="tab" data-tab="methodology">Methodology</button>
+  </nav>
+
+  <main>
+    <!-- OVERVIEW: cards + price history -->
+    <section id="overview" class="panel active">
+      <h2>Global Index Monitor</h2>
+      <hr class="rule" />
+      <p class="muted">Fifteen headline indices. Click a card to load its price history below.</p>
+      <div id="index-grid" class="index-grid"></div>
+
+      <div class="chart-block">
+        <div class="chart-head">
+          <div class="chart-title" id="chart-title">Price History</div>
+          <div class="controls">
+            <div class="range-toggle" id="range-toggle">
+              <button data-range="30">1M</button>
+              <button data-range="90">3M</button>
+              <button data-range="180">6M</button>
+              <button data-range="365">1Y</button>
+              <button data-range="9999" class="active">Max</button>
+            </div>
+            <label class="compare-toggle">
+              <input type="checkbox" id="compare-all" /> Compare all (rebased to 100)
+            </label>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="price-chart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- SIMULATOR -->
+    <section id="simulator" class="panel">
+      <h2>Monte Carlo Market Simulator</h2>
+      <hr class="rule" />
+      <p class="muted">Geometric Brownian Motion calibrated to each index's trailing 1-year drift and volatility. Runs live in your browser — change the settings and re-run as much as you like. <em>Educational simulation, not a forecast.</em></p>
+
+      <div class="sim-controls">
+        <div class="field">
+          <label for="sim-index">Index</label>
+          <select id="sim-index"></select>
+        </div>
+        <div class="field">
+          <label for="sim-horizon">Horizon</label>
+          <select id="sim-horizon">
+            <option value="0.5">6 months</option>
+            <option value="1" selected>1 year</option>
+            <option value="2">2 years</option>
+            <option value="3">3 years</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sim-paths">Paths</label>
+          <select id="sim-paths">
+            <option value="250">250</option>
+            <option value="500">500</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+          </select>
+        </div>
+        <button class="btn" id="run-sim">Run simulation</button>
+      </div>
+
+      <div class="legend">
+        <span><span class="swatch" style="border-top-color:var(--bull)"></span>95th percentile</span>
+        <span><span class="swatch" style="border-top-style:solid;border-top-color:var(--accent)"></span>Median</span>
+        <span><span class="swatch" style="border-top-color:var(--bear)"></span>5th percentile</span>
+      </div>
+      <div class="chart-canvas-wrap"><canvas id="sim-chart"></canvas></div>
+
+      <div class="stat-row" id="sim-stats"></div>
+    </section>
+
+    <!-- METHODOLOGY -->
+    <section id="methodology" class="panel">
+      <h2>How MarketPulse works</h2>
+      <hr class="rule" />
+      <p>Two parts, both grounded in the same daily-updated data:</p>
+      <ol>
+        <li><strong>Index Monitor</strong> — latest level, today's move, and year-to-date change for fifteen world indices, plus a price-history chart. "Compare all (rebased to 100)" normalizes every index to a common starting point so relative performance is directly comparable.</li>
+        <li><strong>Monte Carlo Simulator</strong> — projects an index forward using Geometric Brownian Motion:</li>
+      </ol>
+      <pre class="formula">S(t+1) = S(t) · exp( (μ − ½σ²)·dt + σ·√dt·Z ),   Z ~ N(0,1),  dt = 1/252</pre>
+      <p><strong>μ</strong> (annual drift) and <strong>σ</strong> (annual volatility) are calibrated from each index's trailing one year of daily log-returns — recomputed every day. The simulator draws hundreds to thousands of independent paths, then reports the <strong>median</strong> outcome, the <strong>5th-percentile</strong> level (a Value-at-Risk style downside), the <strong>95th percentile</strong>, and <strong>P(loss)</strong> — the share of paths ending below today's level.</p>
+      <p class="muted small">GBM assumes constant drift/volatility and normally-distributed returns. Real markets have fat tails, regime shifts, and jumps, so treat the bands as a calibrated illustration of dispersion — not a prediction.</p>
+      <p class="disclaimer">⚠ Educational / research instrument. Index data refreshes daily, not in real time; the source is an unofficial free endpoint. Simulations are illustrative. <strong>Not financial advice.</strong></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>MarketPulse · built by Debjit Mukherjee · <a href="https://github.com/" target="_blank" rel="noopener">Source on GitHub</a><br>
+    Data: Yahoo Finance (no key) · Hosting: GitHub Pages · Simulation runs in-browser — no live server, no per-visitor cost.</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

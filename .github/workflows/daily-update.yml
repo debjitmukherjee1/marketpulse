@@ -1,0 +1,34 @@
+name: Daily index refresh
+
+# Free for public repos (unlimited Actions minutes). Runs once a day.
+on:
+  schedule:
+    - cron: "30 5 * * *"   # 05:30 UTC daily — after most markets have a close
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install -r pipeline/requirements.txt
+      - name: Run pipeline (live)
+        env:
+          MARKETPULSE_LIVE: "1"
+        run: |
+          cd pipeline
+          python run_all.py
+      - name: Commit refreshed data
+        run: |
+          git config user.name "marketpulse-bot"
+          git config user.email "actions@github.com"
+          git add site/data
+          git diff --staged --quiet || git commit -m "chore: daily index refresh [skip ci]"
+          git push
