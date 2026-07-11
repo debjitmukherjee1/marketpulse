@@ -10,7 +10,7 @@ Yahoo chart endpoint:
 """
 import math
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import config
 
@@ -30,8 +30,21 @@ _MOCK_ANCHOR = {
 }
 
 
+def _weekday_dates_ending_today(n):
+    """n weekday (Mon-Fri) dates ending today, oldest first — approximates a
+    trading calendar (no holiday calendar, but skips weekends) so mock series
+    span roughly the same ~2yr window as _live_series's n trading-day slice,
+    rather than n calendar days (~n/365yr, materially shorter)."""
+    dates, d = [], datetime.now(timezone.utc).date()
+    while len(dates) < n:
+        if d.weekday() < 5:
+            dates.append(d)
+        d -= timedelta(days=1)
+    return list(reversed(dates))
+
+
 def _mock_series(symbol):
-    """Deterministic ~18-month daily close series via geometric random walk."""
+    """Deterministic ~2yr daily close series via geometric random walk."""
     rng = random.Random(symbol)
     n = config.HISTORY_DAYS
     start = _MOCK_ANCHOR.get(symbol, 10000)
@@ -39,8 +52,7 @@ def _mock_series(symbol):
     mu_d = rng.uniform(-0.0004, 0.0009)     # daily drift
     sig_d = rng.uniform(0.007, 0.016)       # daily vol
     closes, price = [], start
-    today = datetime.utcnow().date()
-    dates = [today - timedelta(days=(n - 1 - i)) for i in range(n)]
+    dates = _weekday_dates_ending_today(n)
     for _ in range(n):
         shock = rng.gauss(mu_d, sig_d)
         price *= math.exp(shock)
@@ -60,7 +72,7 @@ def _live_series(symbol):
     for t, c in zip(ts, closes):
         if c is None:
             continue
-        dates.append(datetime.utcfromtimestamp(t).date().isoformat())
+        dates.append(datetime.fromtimestamp(t, tz=timezone.utc).date().isoformat())
         out.append(round(c, 2))
     return dates[-config.HISTORY_DAYS:], out[-config.HISTORY_DAYS:]
 

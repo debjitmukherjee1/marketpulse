@@ -324,9 +324,13 @@ function positionIndicatorToActive() {
 }
 document.querySelectorAll(".tab").forEach(t => {
   t.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(x => {
+      x.classList.remove("active");
+      x.setAttribute("aria-selected", "false");
+    });
     document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
     t.classList.add("active");
+    t.setAttribute("aria-selected", "true");
     document.getElementById(t.dataset.tab).classList.add("active");
     moveIndicator(t);
     // charts need a resize nudge when their panel becomes visible

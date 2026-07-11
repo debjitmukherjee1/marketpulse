@@ -8,9 +8,15 @@
   <meta property="og:title" content="MarketPulse — Global Index Monitor & Simulator" />
   <meta property="og:description" content="Fifteen world indices, price history, and a live Monte Carlo simulator. Updated daily." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://debjitmukherjee1.github.io/marketpulse/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="MarketPulse — Global Index Monitor & Simulator" />
+  <meta name="twitter:description" content="Fifteen world indices, price history, and a live Monte Carlo simulator. Updated daily." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+          integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4"
+          crossorigin="anonymous"></script>
 </head>
 <body>
   <header class="topbar">
@@ -31,16 +37,16 @@
     </div>
   </header>
 
-  <nav class="tabs">
+  <nav class="tabs" role="tablist">
     <span class="tab-indicator" id="tab-indicator"></span>
-    <button class="tab active" data-tab="overview">Index Monitor</button>
-    <button class="tab" data-tab="simulator">Monte Carlo Simulator</button>
-    <button class="tab" data-tab="methodology">Methodology</button>
+    <button class="tab active" id="tab-btn-overview" data-tab="overview" role="tab" aria-selected="true" aria-controls="overview">Index Monitor</button>
+    <button class="tab" id="tab-btn-simulator" data-tab="simulator" role="tab" aria-selected="false" aria-controls="simulator">Monte Carlo Simulator</button>
+    <button class="tab" id="tab-btn-methodology" data-tab="methodology" role="tab" aria-selected="false" aria-controls="methodology">Methodology</button>
   </nav>
 
   <main>
     <!-- OVERVIEW: cards + price history -->
-    <section id="overview" class="panel active">
+    <section id="overview" class="panel active" role="tabpanel" aria-labelledby="tab-btn-overview">
       <h2>Global Index Monitor</h2>
       <hr class="rule" />
       <p class="muted">Fifteen headline indices. Click a card to load its price history below.</p>
@@ -62,12 +68,12 @@
             </label>
           </div>
         </div>
-        <div class="chart-canvas-wrap"><canvas id="price-chart"></canvas></div>
+        <div class="chart-canvas-wrap"><canvas id="price-chart" role="img" aria-label="Price history chart for the selected index or indices"></canvas></div>
       </div>
     </section>
 
     <!-- SIMULATOR -->
-    <section id="simulator" class="panel">
+    <section id="simulator" class="panel" role="tabpanel" aria-labelledby="tab-btn-simulator">
       <h2>Monte Carlo Market Simulator</h2>
       <hr class="rule" />
       <p class="muted">Geometric Brownian Motion calibrated to each index's trailing 1-year drift and volatility. Runs live in your browser — change the settings and re-run as much as you like. <em>Educational simulation, not a forecast.</em></p>
@@ -103,13 +109,13 @@
         <span><span class="swatch" style="border-top-style:solid;border-top-color:var(--accent)"></span>Median</span>
         <span><span class="swatch" style="border-top-color:var(--bear)"></span>5th percentile</span>
       </div>
-      <div class="chart-canvas-wrap"><canvas id="sim-chart"></canvas></div>
+      <div class="chart-canvas-wrap"><canvas id="sim-chart" role="img" aria-label="Monte Carlo simulation chart showing 5th, 50th and 95th percentile bands"></canvas></div>
 
       <div class="stat-row" id="sim-stats"></div>
     </section>
 
     <!-- METHODOLOGY -->
-    <section id="methodology" class="panel">
+    <section id="methodology" class="panel" role="tabpanel" aria-labelledby="tab-btn-methodology">
       <h2>How MarketPulse works</h2>
       <hr class="rule" />
       <p>Two parts, both grounded in the same daily-updated data:</p>
