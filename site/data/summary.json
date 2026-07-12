@@ -1,5 +1,5 @@
 {
-  "updated_at": "11 Jul 2026 15:09 UTC",
+  "updated_at": "12 Jul 2026 07:40 UTC",
   "cards": [
     {
       "code": "GSPC",
@@ -9,7 +9,8 @@
       "change_today": 0.42,
       "ytd": 10.66,
       "mu": 0.1902,
-      "sigma": 0.1253
+      "sigma": 0.1253,
+      "source": "live"
     },
     {
       "code": "IXIC",
@@ -19,7 +20,8 @@
       "change_today": 0.29,
       "ytd": 13.08,
       "mu": 0.243,
-      "sigma": 0.1773
+      "sigma": 0.1773,
+      "source": "live"
     },
     {
       "code": "DJI",
@@ -29,7 +31,8 @@
       "change_today": 0.29,
       "ytd": 9.52,
       "mu": 0.1689,
-      "sigma": 0.1233
+      "sigma": 0.1233,
+      "source": "live"
     },
     {
       "code": "FTSE",
@@ -39,7 +42,8 @@
       "change_today": 0.24,
       "ytd": 5.7,
       "mu": 0.1605,
-      "sigma": 0.1132
+      "sigma": 0.1132,
+      "source": "live"
     },
     {
       "code": "GDAXI",
@@ -49,7 +53,8 @@
       "change_today": -0.2,
       "ytd": 2.35,
       "mu": 0.0329,
-      "sigma": 0.162
+      "sigma": 0.162,
+      "source": "live"
     },
     {
       "code": "FCHI",
@@ -59,7 +64,8 @@
       "change_today": 0.15,
       "ytd": 2.32,
       "mu": 0.0712,
-      "sigma": 0.1433
+      "sigma": 0.1433,
+      "source": "live"
     },
     {
       "code": "STOXX50E",
@@ -69,7 +75,8 @@
       "change_today": -0.23,
       "ytd": 8.17,
       "mu": 0.1603,
-      "sigma": 0.1547
+      "sigma": 0.1547,
+      "source": "live"
     },
     {
       "code": "N225",
@@ -79,7 +86,8 @@
       "change_today": 1.2,
       "ytd": 36.19,
       "mu": 0.535,
-      "sigma": 0.2661
+      "sigma": 0.2661,
+      "source": "live"
     },
     {
       "code": "HSI",
@@ -89,7 +97,8 @@
       "change_today": 0.6,
       "ytd": -5.68,
       "mu": 0.0043,
-      "sigma": 0.1876
+      "sigma": 0.1876,
+      "source": "live"
     },
     {
       "code": "000001_SS",
@@ -99,7 +108,8 @@
       "change_today": -1.0,
       "ytd": 0.69,
       "mu": 0.1474,
-      "sigma": 0.1338
+      "sigma": 0.1338,
+      "source": "live"
     },
     {
       "code": "KS11",
@@ -109,7 +119,8 @@
       "change_today": 2.52,
       "ytd": 77.4,
       "mu": 0.8895,
-      "sigma": 0.4431
+      "sigma": 0.4431,
+      "source": "live"
     },
     {
       "code": "AXJO",
@@ -119,7 +130,8 @@
       "change_today": 0.5,
       "ytd": 1.05,
       "mu": 0.0271,
-      "sigma": 0.1242
+      "sigma": 0.1242,
+      "source": "live"
     },
     {
       "code": "GSPTSE",
@@ -129,7 +141,8 @@
       "change_today": 0.3,
       "ytd": 11.33,
       "mu": 0.2692,
-      "sigma": 0.1316
+      "sigma": 0.1316,
+      "source": "live"
     },
     {
       "code": "NSEI",
@@ -139,7 +152,8 @@
       "change_today": 1.02,
       "ytd": -7.36,
       "mu": -0.0537,
-      "sigma": 0.1306
+      "sigma": 0.1306,
+      "source": "live"
     },
     {
       "code": "BSESN",
@@ -149,7 +163,8 @@
       "change_today": 1.08,
       "ytd": -8.98,
       "mu": -0.076,
-      "sigma": 0.1328
+      "sigma": 0.1328,
+      "source": "live"
     }
   ]
 }
