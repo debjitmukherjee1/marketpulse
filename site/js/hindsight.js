@@ -81,6 +81,7 @@
     el.textContent = `Total: ${total}%`;
     el.className = "weight-total " + (total === 100 ? "balanced" : "unbalanced");
     document.getElementById("hs-run").disabled = total !== 100;
+    document.getElementById("hs-send-to-risk").disabled = total !== 100;
   }
 
   function buildBenchmarkSelect(indices) {
@@ -353,4 +354,23 @@
     if (equityChart) equityChart.resize();
     if (scatterChart) scatterChart.resize();
   });
+
+  // ---- cross-tab hook for Risk ----------------------------------------------
+  // Minimal explicit surface (not a shared module — this project has no
+  // bundler, so cross-file state is opt-in via window, same spirit as the
+  // decoupled fetch/cache pattern noted in the file header) so the Risk tab
+  // can borrow the user's current weight mix without the two tabs sharing
+  // internal state.
+  document.getElementById("hs-send-to-risk").addEventListener("click", async () => {
+    await ensureLoaded();
+    if (window.RiskTab && typeof window.RiskTab.receiveWeightsFromHindsight === "function") {
+      window.RiskTab.receiveWeightsFromHindsight(Object.assign({}, hState.weights));
+    }
+    document.getElementById("tab-btn-risk").click();
+  });
+
+  window.Hindsight = {
+    ensureLoaded,
+    getWeights: () => Object.assign({}, hState.weights),
+  };
 })();

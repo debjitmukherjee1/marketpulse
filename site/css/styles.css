@@ -193,3 +193,41 @@ table.year-table thead th { color: var(--ink-dim); font-size: .72rem; letter-spa
    browser-default intrinsic width overflow the grid cell instead of
    shrinking to the flex:1 share — bleeds into the next weight-grid column */
 .weight-row input[type=range] { min-width: 0; }
+
+/* risk — correlation, rolling volatility, portfolio VaR */
+.btn-outline { background: transparent; color: var(--accent); border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); padding: .6rem 1.3rem; font-family: var(--serif); font-size: .98rem;
+  cursor: pointer; transition: background .2s var(--ease-out), color .2s; }
+.btn-outline:hover { background: var(--accent-wash); }
+.link-btn { background: none; border: none; padding: 0; color: var(--accent); font-family: var(--serif);
+  font-size: inherit; text-decoration: underline; cursor: pointer; }
+.link-btn:hover { color: #7c5522; }
+
+.risk-heatmap-wrap { overflow-x: auto; margin-top: .6rem; }
+.risk-heatmap { display: grid; gap: 2px; width: max-content; }
+.rh-corner { background: transparent; }
+.rh-colhead, .rh-rowhead { font-size: .66rem; color: var(--ink-dim); display: flex; align-items: center;
+  justify-content: center; padding: .3rem .2rem; white-space: nowrap; }
+.rh-rowhead { justify-content: flex-end; padding-right: .5rem; }
+.rh-cell { width: 54px; height: 40px; display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; font-variant-numeric: tabular-nums; border-radius: 3px; cursor: default;
+  transition: transform .15s var(--ease-out), box-shadow .15s var(--ease-out); }
+.rh-cell:hover, .rh-cell:focus-visible { transform: scale(1.08); box-shadow: var(--shadow-2); z-index: 2;
+  outline: none; position: relative; }
+.rh-cell.rh-diagonal { background: var(--surface-2); color: var(--ink-dim); }
+
+.risk-tooltip { position: fixed; pointer-events: none; background: var(--ink); color: #fff;
+  font-size: .78rem; padding: .35rem .6rem; border-radius: var(--radius-sm); box-shadow: var(--shadow-2);
+  z-index: 50; opacity: 0; transition: opacity .12s var(--ease-out); white-space: nowrap; }
+.risk-tooltip.visible { opacity: 1; }
+
+.risk-vol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 1rem; margin-top: 1rem; }
+.risk-vol-mini { border: 1px solid var(--line-soft); border-radius: var(--radius-sm); padding: .6rem; background: var(--surface-2); }
+.risk-vol-mini-title { font-size: .78rem; color: var(--ink-dim); margin-bottom: .35rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.risk-vol-mini-canvas-wrap { position: relative; height: 110px; }
+
+.risk-var-hist-wrap { height: 320px; }
+
+@media (max-width: 640px) {
+  .risk-vol-mini-canvas-wrap { height: 90px; }
+}

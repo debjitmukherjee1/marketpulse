@@ -43,6 +43,7 @@
     <button class="tab" id="tab-btn-simulator" data-tab="simulator" role="tab" aria-selected="false" aria-controls="simulator">Monte Carlo Simulator</button>
     <button class="tab" id="tab-btn-methodology" data-tab="methodology" role="tab" aria-selected="false" aria-controls="methodology">Methodology</button>
     <button class="tab" id="tab-btn-hindsight" data-tab="hindsight" role="tab" aria-selected="false" aria-controls="hindsight">Backtester</button>
+    <button class="tab" id="tab-btn-risk" data-tab="risk" role="tab" aria-selected="false" aria-controls="risk">Risk</button>
   </nav>
 
   <main>
@@ -172,6 +173,7 @@
             <input type="number" id="hs-rf" min="0" max="20" step="0.1" value="0" />
           </div>
           <button class="btn" id="hs-run" disabled>Run backtest</button>
+          <button class="btn btn-outline" id="hs-send-to-risk" type="button">Send weights to Risk →</button>
         </div>
         <div id="hs-warnings"></div>
       </div>
@@ -197,6 +199,69 @@
 
       <p class="disclaimer small">⚠ <strong>Read before trusting these numbers:</strong> all returns are <strong>local-currency price returns</strong> — no FX conversion, no dividends, no fees or taxes. A portfolio blending indices priced in different currencies (e.g. S&amp;P 500 in USD, Nikkei 225 in JPY) measures a blend of <em>index performance</em>, not a return you could actually earn by holding these instruments. Indices are aligned on the <strong>intersection</strong> of trading dates across whichever ones you've weighted — a date any one of them didn't trade drops out of the whole backtest, rather than being forward-filled. Indices with less history than your chosen start date are excluded from the run and flagged above, never silently folded into the others. Educational tool, not investment advice.</p>
     </section>
+
+    <!-- RISK: correlation, rolling volatility, portfolio VaR -->
+    <section id="risk" class="panel" role="tabpanel" aria-labelledby="tab-btn-risk">
+      <h2>Risk — Correlation, Volatility &amp; Portfolio VaR</h2>
+      <hr class="rule" />
+      <p class="muted">Computed entirely in your browser from the same daily-close data as the other tabs. <em>Educational risk instrument, not a forecast.</em></p>
+
+      <!-- Correlation matrix -->
+      <div class="chart-block">
+        <div class="chart-head">
+          <div class="chart-title">Correlation matrix — daily returns</div>
+          <div class="controls">
+            <div class="range-toggle" id="risk-corr-window">
+              <button data-window="90" class="active">90D</button>
+              <button data-window="252">1Y</button>
+              <button data-window="756">3Y</button>
+            </div>
+          </div>
+        </div>
+        <p class="muted small" id="risk-corr-note"></p>
+        <div class="risk-heatmap-wrap">
+          <div id="risk-corr-heatmap" class="risk-heatmap" role="img" aria-label="Correlation heatmap across the fifteen indices"></div>
+        </div>
+      </div>
+
+      <!-- Rolling volatility -->
+      <div class="chart-block">
+        <div class="chart-head">
+          <div class="chart-title">Rolling annualized volatility</div>
+          <div class="controls">
+            <div class="field">
+              <label for="risk-vol-index">Index</label>
+              <select id="risk-vol-index"></select>
+            </div>
+            <label class="compare-toggle">
+              <input type="checkbox" id="risk-vol-smallmult" /> Show all indices (small multiples)
+            </label>
+          </div>
+        </div>
+        <div class="legend">
+          <span><span class="swatch" style="border-top-style:solid;border-top-color:var(--accent)"></span>30D</span>
+          <span><span class="swatch" style="border-top-color:var(--neutral)"></span>90D</span>
+        </div>
+        <div class="chart-canvas-wrap" id="risk-vol-single-wrap"><canvas id="risk-vol-chart" role="img" aria-label="30 and 90 day rolling annualized volatility for the selected index"></canvas></div>
+        <div class="risk-vol-grid" id="risk-vol-grid" hidden></div>
+      </div>
+
+      <!-- Portfolio VaR -->
+      <div class="chart-block">
+        <div class="chart-head">
+          <div class="chart-title">Portfolio Value-at-Risk — 1-day historical simulation</div>
+          <div class="controls">
+            <button class="btn" id="risk-run-var">Compute VaR</button>
+          </div>
+        </div>
+        <p class="muted small" id="risk-var-weights-note">Default: equal-weight across all fifteen indices. <button type="button" class="link-btn" id="risk-use-hs-weights">Use the Backtester tab's current weights</button></p>
+        <div id="risk-var-warnings"></div>
+        <div class="chart-canvas-wrap risk-var-hist-wrap"><canvas id="risk-var-chart" role="img" aria-label="Histogram of the portfolio's historical daily returns with the loss tail shaded"></canvas></div>
+        <div class="stat-row" id="risk-var-stats"></div>
+      </div>
+
+      <p class="disclaimer small">⚠ <strong>Read before trusting these numbers:</strong> all returns are <strong>local-currency price returns</strong> — no FX conversion, no dividends, no fees or taxes, same as the Backtester tab. The correlation matrix and volatility lines use each index's own trading calendar; the portfolio VaR/CVaR aligns on the <strong>intersection</strong> of trading dates across whichever indices carry nonzero weight. Historical VaR/CVaR assume <strong>the future will resemble the historical window used</strong> — they describe how this exact portfolio mix would have fared on days already in the data, not a guarantee about tomorrow; a regime change, crisis, or newly-listed index with a short history can make the real tail risk larger than history suggests. Uninvested weight (if any) is held as 0-return cash, never silently redistributed. Educational tool, not investment advice.</p>
+    </section>
   </main>
 
   <footer>
@@ -210,7 +275,9 @@
   </footer>
 
   <script src="js/backtest.js"></script>
+  <script src="js/risk.js"></script>
   <script src="js/app.js"></script>
   <script src="js/hindsight.js"></script>
+  <script src="js/risk-tab.js"></script>
 </body>
 </html>
