@@ -155,3 +155,4 @@ select:hover, input[type=number]:hover { border-color: var(--accent); }
 .disclaimer { background: rgba(150,53,39,.08); border: 1px solid rgba(150,53,39,.25); border-radius: var(--radius-sm); padding: .8rem 1rem; font-style: italic; }
 
 footer { padding: 1.75rem; text-align: center; color: var(--ink-dim); font-size: .82rem; border-top: 1px solid var(--line); font-style: italic; margin-top: 1rem; }
+footer .sibling-links a { margin: 0 .4rem; }
