@@ -42,6 +42,7 @@
     <button class="tab active" id="tab-btn-overview" data-tab="overview" role="tab" aria-selected="true" aria-controls="overview">Index Monitor</button>
     <button class="tab" id="tab-btn-simulator" data-tab="simulator" role="tab" aria-selected="false" aria-controls="simulator">Monte Carlo Simulator</button>
     <button class="tab" id="tab-btn-methodology" data-tab="methodology" role="tab" aria-selected="false" aria-controls="methodology">Methodology</button>
+    <button class="tab" id="tab-btn-hindsight" data-tab="hindsight" role="tab" aria-selected="false" aria-controls="hindsight">Backtester</button>
   </nav>
 
   <main>
@@ -128,6 +129,74 @@
       <p class="muted small">GBM assumes constant drift/volatility and normally-distributed returns. Real markets have fat tails, regime shifts, and jumps, so treat the bands as a calibrated illustration of dispersion — not a prediction.</p>
       <p class="disclaimer">⚠ Educational / research instrument. Index data refreshes daily, not in real time; the source is an unofficial free endpoint. Simulations are illustrative. <strong>Not financial advice.</strong></p>
     </section>
+
+    <!-- HINDSIGHT: portfolio backtester -->
+    <section id="hindsight" class="panel" role="tabpanel" aria-labelledby="tab-btn-hindsight">
+      <h2>Hindsight — Portfolio Backtester</h2>
+      <hr class="rule" />
+      <p class="muted">Build a portfolio from the fifteen MarketPulse indices, pick a start date and rebalancing rule, and see how it would have performed. Computed entirely in your browser from the same daily JSON as the other tabs.</p>
+
+      <div class="chart-block">
+        <div class="chart-head">
+          <div class="chart-title">Portfolio weights</div>
+          <div class="controls">
+            <span class="weight-total" id="hs-weight-total">Total: 100%</span>
+          </div>
+        </div>
+        <div class="weight-grid" id="hs-weight-grid"></div>
+
+        <div class="sim-controls hs-controls">
+          <div class="field">
+            <label for="hs-start-date">Start date</label>
+            <input type="date" id="hs-start-date" />
+          </div>
+          <div class="field">
+            <label for="hs-amount">Initial amount</label>
+            <input type="number" id="hs-amount" min="1" step="1000" value="10000" />
+          </div>
+          <div class="field">
+            <label for="hs-rebalance">Rebalancing</label>
+            <select id="hs-rebalance">
+              <option value="none" selected>None (buy &amp; hold)</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="annual">Annual</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="hs-benchmark">Benchmark</label>
+            <select id="hs-benchmark"></select>
+          </div>
+          <div class="field">
+            <label for="hs-rf">Risk-free rate, annual</label>
+            <input type="number" id="hs-rf" min="0" max="20" step="0.1" value="0" />
+          </div>
+          <button class="btn" id="hs-run" disabled>Run backtest</button>
+        </div>
+        <div id="hs-warnings"></div>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-head">
+          <div class="chart-title">Equity curve</div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="hs-equity-chart" role="img" aria-label="Portfolio equity curve versus the chosen benchmark, with the maximum drawdown period shaded"></canvas></div>
+        <div class="stat-row" id="hs-stats"></div>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-head"><div class="chart-title">Calendar-year returns</div></div>
+        <div class="year-table-wrap" id="hs-year-table-wrap"></div>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-head"><div class="chart-title">Risk / return — 2,000 random-weight portfolios</div></div>
+        <p class="muted small" id="hs-scatter-note">A poor-man's efficient frontier: each faint dot is a random split across your invested indices; your portfolio is the highlighted one.</p>
+        <div class="chart-canvas-wrap hs-scatter-wrap"><canvas id="hs-scatter-chart" role="img" aria-label="Scatter plot of annualized volatility versus annualized return for 2000 random-weight portfolios, with the user's portfolio highlighted"></canvas></div>
+      </div>
+
+      <p class="disclaimer small">⚠ <strong>Read before trusting these numbers:</strong> all returns are <strong>local-currency price returns</strong> — no FX conversion, no dividends, no fees or taxes. A portfolio blending indices priced in different currencies (e.g. S&amp;P 500 in USD, Nikkei 225 in JPY) measures a blend of <em>index performance</em>, not a return you could actually earn by holding these instruments. Indices are aligned on the <strong>intersection</strong> of trading dates across whichever ones you've weighted — a date any one of them didn't trade drops out of the whole backtest, rather than being forward-filled. Indices with less history than your chosen start date are excluded from the run and flagged above, never silently folded into the others. Educational tool, not investment advice.</p>
+    </section>
   </main>
 
   <footer>
@@ -140,6 +209,8 @@
     </p>
   </footer>
 
+  <script src="js/backtest.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/hindsight.js"></script>
 </body>
 </html>

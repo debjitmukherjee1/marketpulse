@@ -156,3 +156,40 @@ select:hover, input[type=number]:hover { border-color: var(--accent); }
 
 footer { padding: 1.75rem; text-align: center; color: var(--ink-dim); font-size: .82rem; border-top: 1px solid var(--line); font-style: italic; margin-top: 1rem; }
 footer .sibling-links a { margin: 0 .4rem; }
+
+/* hindsight — portfolio backtester */
+.hs-controls { margin-top: 1.4rem; }
+.weight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: .7rem 1.4rem; margin-top: 1rem; }
+.weight-row { display: flex; align-items: center; gap: .6rem; }
+.weight-row .weight-name { flex: 0 0 122px; font-size: .85rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.weight-row input[type=range] { flex: 1; accent-color: var(--accent); }
+.weight-row .weight-val { flex: 0 0 42px; text-align: right; font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--ink-dim); }
+.weight-total { font-size: .92rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.weight-total.balanced { color: var(--bull); }
+.weight-total.unbalanced { color: var(--bear); }
+
+.notice { background: var(--accent-wash); border: 1px solid rgba(156,107,46,.3); border-radius: var(--radius-sm); padding: .7rem 1rem; font-size: .86rem; margin-top: .8rem; }
+.notice.notice-bad { background: rgba(150,53,39,.08); border-color: rgba(150,53,39,.25); }
+#hs-warnings:empty { display: none; }
+
+.year-table-wrap { overflow-x: auto; margin-top: .8rem; }
+table.year-table { width: 100%; border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; min-width: 260px; }
+table.year-table th, table.year-table td { padding: .5rem .8rem; text-align: right; border-bottom: 1px solid var(--line-soft); }
+table.year-table th:first-child, table.year-table td:first-child { text-align: left; }
+table.year-table thead th { color: var(--ink-dim); font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid var(--line); }
+
+.hs-scatter-wrap { height: 400px; }
+
+@media (max-width: 640px) {
+  .weight-row { flex-wrap: wrap; }
+  .weight-row .weight-name { flex: 1 1 100%; }
+  .weight-row input[type=range] { flex: 1 1 auto; }
+  .chart-canvas-wrap, .hs-scatter-wrap { height: 300px; }
+  .sim-controls.hs-controls { flex-direction: column; align-items: stretch; }
+  .sim-controls.hs-controls .field { width: 100%; }
+}
+
+/* fix: flex children default to min-width:auto, which lets a range input's
+   browser-default intrinsic width overflow the grid cell instead of
+   shrinking to the flex:1 share — bleeds into the next weight-grid column */
+.weight-row input[type=range] { min-width: 0; }

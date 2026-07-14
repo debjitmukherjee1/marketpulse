@@ -30,8 +30,17 @@ INDICES = [
 ]
 
 # --- History window --------------------------------------------------------
-HISTORY_DAYS = 550          # ~2.1yr of trading-day closes (covers "Max" + YTD)
+# Fetch 10 years of daily closes so Hindsight's backtester has several years
+# to work with. NOT range=max: Yahoo silently serves quarterly bars instead
+# of daily ones once a symbol's full history gets long (see fetch_indices.py
+# for the verified behavior) — range=10y is the longest range confirmed to
+# still return true daily bars. To keep repo size bounded, run_all.py thins
+# anything older than DAILY_YEARS to one point/week; the trailing DAILY_YEARS
+# window stays at full daily resolution (needed by the Monte Carlo
+# trailing-1yr calibration and by the backtester).
+DAILY_YEARS = 5
 TRADING_DAYS_YEAR = 252     # for annualizing drift/vol (Monte Carlo calibration)
+MOCK_HISTORY_YEARS = 10     # mock series span, matches the real range=10y fetch
 
 # --- Output ----------------------------------------------------------------
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "site", "data")

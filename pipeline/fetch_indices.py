@@ -6,7 +6,16 @@ LIVE:  Yahoo Finance chart endpoint (no API key). One lightweight request per
 MOCK:  deterministic synthetic GBM series so the site builds fully offline.
 
 Yahoo chart endpoint:
-  https://query1.finance.yahoo.com/v8/finance/chart/^GSPC?range=2y&interval=1d
+  https://query1.finance.yahoo.com/v8/finance/chart/^GSPC?range=10y&interval=1d
+
+Note: range=max is NOT used, despite the name suggesting "everything." Yahoo
+silently overrides interval=1d for symbols with decades of history (verified:
+^GSPC's max-range response comes back with meta.dataGranularity="3mo",
+i.e. quarterly bars, silently — same HTTP 200, no error) which corrupts the
+trailing-1yr Monte Carlo calibration and the backtester's daily-return math
+alike. range=10y is the longest range confirmed (empirically, via
+meta.dataGranularity) to still return true daily bars, and 10 years is
+comfortably enough history for Hindsight's backtester.
 """
 import math
 import random
@@ -44,9 +53,12 @@ def _weekday_dates_ending_today(n):
 
 
 def _mock_series(symbol):
-    """Deterministic ~2yr daily close series via geometric random walk."""
+    """Deterministic multi-year daily close series via geometric random walk.
+    Spans MOCK_HISTORY_YEARS so run_all.py's weekly-thinning path (for data
+    older than DAILY_YEARS) is exercised offline, same as it would be against
+    Yahoo's range=max history."""
     rng = random.Random(symbol)
-    n = config.HISTORY_DAYS
+    n = round(config.MOCK_HISTORY_YEARS * config.TRADING_DAYS_YEAR)
     start = _MOCK_ANCHOR.get(symbol, 10000)
     # give each index its own gentle drift + vol so "compare all" looks varied
     mu_d = rng.uniform(-0.0004, 0.0009)     # daily drift
@@ -61,7 +73,7 @@ def _mock_series(symbol):
 
 
 def _live_series(symbol):
-    params = {"range": "2y", "interval": "1d"}
+    params = {"range": "10y", "interval": "1d"}
     headers = {"User-Agent": "Mozilla/5.0 (MarketPulse research tool)"}
     r = requests.get(CHART.format(sym=symbol), params=params, headers=headers, timeout=20)
     r.raise_for_status()
@@ -74,7 +86,7 @@ def _live_series(symbol):
             continue
         dates.append(datetime.fromtimestamp(t, tz=timezone.utc).date().isoformat())
         out.append(round(c, 2))
-    return dates[-config.HISTORY_DAYS:], out[-config.HISTORY_DAYS:]
+    return dates, out
 
 
 def fetch_series(symbol):

@@ -7,7 +7,8 @@ For each index it computes, from the daily closes:
   - ytd          : latest vs last close of the prior calendar year (%)
   - mu, sigma    : ANNUALIZED trailing-1yr log-return drift & volatility
                    (these calibrate the in-browser Monte Carlo simulator)
-and trims the history the frontend charts.
+and thins history older than DAILY_YEARS to weekly points (see
+_thin_history) before writing the series the frontend charts.
 
 Writes:
   site/data/manifest.json          -> index list + updated_at
@@ -30,6 +31,35 @@ import fetch_indices
 def _safe_code(symbol):
     """Filesystem/URL-safe id from a Yahoo symbol, e.g. ^GSPC -> GSPC, 000001.SS."""
     return re.sub(r"[^A-Za-z0-9]", "_", symbol).strip("_")
+
+
+def _thin_history(dates, closes):
+    """Keep full daily resolution for the trailing DAILY_YEARS; thin anything
+    older (within the fetched 10y window) to one point per ISO week (last
+    trading day seen in that week), roughly halving repo size for the older
+    half of the window. Leaves the calibration window, change_today, and YTD
+    baseline — all within the trailing daily section — untouched."""
+    if not dates:
+        return dates, closes
+    last = datetime.fromisoformat(dates[-1]).date()
+    try:
+        cutoff = last.replace(year=last.year - config.DAILY_YEARS)
+    except ValueError:  # last is Feb 29 and cutoff year isn't a leap year
+        cutoff = last.replace(month=2, day=28, year=last.year - config.DAILY_YEARS)
+
+    split = next((i for i, d in enumerate(dates) if datetime.fromisoformat(d).date() >= cutoff), len(dates))
+    old_dates, old_closes = dates[:split], closes[:split]
+    recent_dates, recent_closes = dates[split:], closes[split:]
+
+    weekly = {}
+    for d, c in zip(old_dates, old_closes):
+        wk = datetime.fromisoformat(d).isocalendar()[:2]
+        weekly[wk] = (d, c)  # later date within the week overwrites, so this keeps the last
+    thinned = sorted(weekly.values())
+
+    out_dates = [d for d, _ in thinned] + recent_dates
+    out_closes = [c for _, c in thinned] + recent_closes
+    return out_dates, out_closes
 
 
 def _log_returns(closes):
@@ -113,6 +143,7 @@ def main():
             dates, closes = fetch_indices._mock_series(symbol)
             source = "mock"
 
+        dates, closes = _thin_history(dates, closes)
         level = closes[-1]
         change_today = round((closes[-1] / closes[-2] - 1) * 100, 2)
         ytd = _ytd_pct(dates, closes)
