@@ -1,8 +1,16 @@
 name: Deploy to GitHub Pages
 
+# Publishes site/ to GitHub Pages. Runs on every push to main that touches
+# site/ from a real human commit -- a GITHUB_TOKEN-authored push (like the
+# daily-update.yml bot's commit) does NOT trigger this (GitHub suppresses
+# that chaining), which is why daily-update.yml deploys Pages inline itself
+# instead of relying on this workflow. This one only covers direct pushes,
+# or manual dispatch.
 on:
   push:
     branches: [main]
+    paths:
+      - "site/**"
   workflow_dispatch: {}
 
 permissions:

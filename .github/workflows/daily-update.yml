@@ -6,33 +6,81 @@ on:
     - cron: "30 5 * * *"   # 05:30 UTC daily — after most markets have a close
   workflow_dispatch: {}
 
-permissions:
-  contents: write
-
+# Prevents a manual run from racing the cron (or a double-click on "Run
+# workflow"): without this, two overlapping runs can both reach `git push`,
+# the second gets rejected as non-fast-forward, and that run's Pages deploy
+# never happens -- silent stale-site failure with no obvious cause in the
+# Actions log. queue rather than cancel, since a bot commit mid-flight
+# shouldn't be killed.
 concurrency:
-  group: daily-refresh
+  group: daily-update
   cancel-in-progress: false
+
+permissions:
+  contents: write          # needed so the bot can commit the refreshed JSON
+  pages: write             # needed to deploy the refreshed site
+  id-token: write          # needed for the Pages deployment
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      # Belt-and-suspenders alongside the concurrency group above: sync to
+      # the latest main now, while the tree is still clean (pulling later,
+      # after the pipeline has already written uncommitted changes to
+      # site/data, risks a rebase conflict against those same files).
+      - name: Sync with latest main
+        run: git pull --rebase origin main
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install deps
         run: pip install -r pipeline/requirements.txt
+
       - name: Run pipeline (live)
+        # If one index genuinely errors (not an external-API hiccup -- those
+        # already degrade to the previous committed data inside the pipeline
+        # -- but an actual bug), run_all.py exits non-zero so this step is
+        # flagged. Without continue-on-error that would skip the commit/deploy
+        # steps below and silently keep the WHOLE site stale over one bad
+        # index; this way whatever indices did succeed still ship, and the
+        # flagged step in the Actions run is what surfaces the failure.
+        continue-on-error: true
         env:
           MARKETPULSE_LIVE: "1"
         run: |
           cd pipeline
           python run_all.py
+
       - name: Commit refreshed data
         run: |
           git config user.name "marketpulse-bot"
           git config user.email "actions@github.com"
           git add site/data
-          git diff --staged --quiet || git commit -m "chore: daily index refresh"
+          # [skip ci] suppresses every push/pull_request-triggered workflow
+          # repo-wide, not just this one -- currently harmless since a
+          # GITHUB_TOKEN-authored push doesn't trigger other workflows'
+          # on:push anyway (see pages.yml's comment), but if GITHUB_TOKEN is
+          # ever swapped for a PAT/deploy key to get that chaining working,
+          # this would silently keep blocking it. Worth remembering.
+          git diff --staged --quiet || git commit -m "chore: daily index refresh [skip ci]"
           git push
+
+      # A GITHUB_TOKEN-authored push above does not itself trigger pages.yml's
+      # `on: push` (GitHub suppresses workflow-triggered chaining), so deploy
+      # the refreshed site directly here too.
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
