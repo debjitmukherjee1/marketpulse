@@ -80,8 +80,13 @@
     const el = document.getElementById("hs-weight-total");
     el.textContent = `Total: ${total}%`;
     el.className = "weight-total " + (total === 100 ? "balanced" : "unbalanced");
-    document.getElementById("hs-run").disabled = total !== 100;
-    document.getElementById("hs-send-to-risk").disabled = total !== 100;
+    // Both buttons stay clickable even off 100% — their handlers validate and
+    // show an inline message instead. A disabled <button> fires no click
+    // event at all, so gating it here made an unbalanced portfolio look like
+    // a silent no-op (nothing rendered, no error) instead of a clear,
+    // actionable one.
+    document.getElementById("hs-run").disabled = false;
+    document.getElementById("hs-send-to-risk").disabled = false;
   }
 
   function buildBenchmarkSelect(indices) {
@@ -113,6 +118,11 @@
     btn.disabled = true;
     warnBox.innerHTML = "";
     try {
+      const totalWeight = Object.values(hState.weights).reduce((a, b) => a + b, 0);
+      if (totalWeight !== 100) {
+        throw new Error(`Portfolio weights must sum to 100% — currently ${totalWeight}%. Adjust the sliders above and run again.`);
+      }
+
       const startDate = document.getElementById("hs-start-date").value;
       const initialAmount = Math.max(1, parseFloat(document.getElementById("hs-amount").value) || 10000);
       const rebalance = document.getElementById("hs-rebalance").value;
@@ -363,6 +373,12 @@
   // internal state.
   document.getElementById("hs-send-to-risk").addEventListener("click", async () => {
     await ensureLoaded();
+    const totalWeight = Object.values(hState.weights).reduce((a, b) => a + b, 0);
+    if (totalWeight !== 100) {
+      document.getElementById("hs-warnings").innerHTML =
+        `<div class="notice notice-bad">Portfolio weights must sum to 100% — currently ${totalWeight}%. Adjust the sliders above before sending to Risk.</div>`;
+      return;
+    }
     if (window.RiskTab && typeof window.RiskTab.receiveWeightsFromHindsight === "function") {
       window.RiskTab.receiveWeightsFromHindsight(Object.assign({}, hState.weights));
     }
