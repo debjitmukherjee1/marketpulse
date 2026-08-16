@@ -1,5 +1,5 @@
 {
-  "updated_at": "15 Aug 2026 05:50 UTC",
+  "updated_at": "16 Aug 2026 05:52 UTC",
   "cards": [
     {
       "code": "GSPC",
@@ -30,8 +30,8 @@
       "level": 53732.41,
       "change_today": -0.2,
       "ytd": 11.8,
-      "mu": 0.1958,
-      "sigma": 0.126,
+      "mu": 0.1791,
+      "sigma": 0.1252,
       "source": "live"
     },
     {
@@ -52,8 +52,8 @@
       "level": 26440.31,
       "change_today": 0.53,
       "ytd": 7.96,
-      "mu": 0.082,
-      "sigma": 0.1592,
+      "mu": 0.0958,
+      "sigma": 0.1586,
       "source": "live"
     },
     {
@@ -74,8 +74,8 @@
       "level": 6539.59,
       "change_today": -0.09,
       "ytd": 12.83,
-      "mu": 0.2034,
-      "sigma": 0.1531,
+      "mu": 0.2041,
+      "sigma": 0.152,
       "source": "live"
     },
     {
@@ -85,8 +85,8 @@
       "level": 68713.8,
       "change_today": 0.59,
       "ytd": 36.5,
-      "mu": 0.5164,
-      "sigma": 0.2808,
+      "mu": 0.5147,
+      "sigma": 0.2816,
       "source": "live"
     },
     {
@@ -151,8 +151,8 @@
       "level": 24366.0,
       "change_today": -0.12,
       "ytd": -6.75,
-      "mu": -0.0116,
-      "sigma": 0.1317,
+      "mu": -0.0164,
+      "sigma": 0.133,
       "source": "live"
     },
     {
