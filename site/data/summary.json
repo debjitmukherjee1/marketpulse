@@ -1,5 +1,5 @@
 {
-  "updated_at": "07 Nov 2026 11:50 UTC",
+  "updated_at": "08 Nov 2026 12:03 UTC",
   "cards": [
     {
       "code": "GSPC",
@@ -148,22 +148,22 @@
       "code": "NSEI",
       "name": "Nifty 50",
       "country": "India",
-      "level": 25030.35,
-      "change_today": 2.01,
-      "ytd": -4.21,
-      "mu": -0.0401,
-      "sigma": 0.1421,
+      "level": 24986.4,
+      "change_today": -0.18,
+      "ytd": -4.38,
+      "mu": -0.0351,
+      "sigma": 0.1419,
       "source": "live"
     },
     {
       "code": "BSESN",
       "name": "BSE Sensex",
       "country": "India",
-      "level": 81028.02,
-      "change_today": 2.17,
-      "ytd": -4.92,
-      "mu": -0.0478,
-      "sigma": 0.1451,
+      "level": 80999.4,
+      "change_today": -0.04,
+      "ytd": -4.95,
+      "mu": -0.0412,
+      "sigma": 0.1449,
       "source": "live"
     }
   ]
