@@ -232,18 +232,18 @@
     const datasets = [
       {
         label: "Drawdown", type: "bar", data: labels.map((d) => (inBand(d) ? yMax : null)),
-        base: yMin, backgroundColor: "rgba(150,53,39,.12)", borderWidth: 0,
+        base: yMin, backgroundColor: "rgba(255,106,74,.12)", borderWidth: 0,
         barPercentage: 1.0, categoryPercentage: 1.0, order: 10,
       },
       {
-        label: "Your portfolio", data: values, borderColor: "var(--accent)",
-        backgroundColor: "rgba(156,107,46,.12)", borderWidth: 2.2, fill: true, pointRadius: 0, tension: .1, order: 1,
+        label: "Your portfolio", data: values, borderColor: "#f3f3f1",
+        backgroundColor: "rgba(243,243,241,.12)", borderWidth: 2.2, fill: true, pointRadius: 0, tension: .1, order: 1,
       },
     ];
     if (benchmarkIncluded) {
       const benchName = ((hState.manifest.indices.find((i) => i.code === benchmarkCode)) || {}).name || benchmarkCode;
       datasets.push({
-        label: benchName, data: benchValues, borderColor: "var(--neutral)",
+        label: benchName, data: benchValues, borderColor: "#8f9199",
         borderWidth: 1.6, borderDash: [5, 3], fill: false, pointRadius: 0, tension: .1, order: 2,
       });
     }
@@ -252,13 +252,13 @@
       interaction: { mode: "index", intersect: false },
       plugins: {
         legend: { display: true, position: "top",
-          labels: { color: "#6b6153", font: { family: "EB Garamond", size: 11 }, boxWidth: 18,
+          labels: { color: "#a8aab0", font: { family: "Geist Mono", size: 11 }, boxWidth: 18,
             filter: (item) => item.text !== "Drawdown" } },
         tooltip: { enabled: true, filter: (item) => item.dataset.label !== "Drawdown" },
       },
       scales: {
-        x: { ticks: { color: "#9a8f79", maxTicksLimit: 8, font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.06)" } },
-        y: { min: yMin, max: yMax, ticks: { color: "#9a8f79", font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.08)" } },
+        x: { ticks: { color: "#8f9199", maxTicksLimit: 8, font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.06)" } },
+        y: { min: yMin, max: yMax, ticks: { color: "#8f9199", font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.08)" } },
       },
       animation: { duration: 450, easing: "easeOutQuart" },
     };
@@ -335,22 +335,22 @@
 
     const cloudPoints = cloud.map((p) => ({ x: p.vol * 100, y: p.return * 100 }));
     const datasets = [
-      { label: "Random portfolios", data: cloudPoints, backgroundColor: "rgba(43,36,26,.16)",
+      { label: "Random portfolios", data: cloudPoints, backgroundColor: "rgba(255,255,255,.16)",
         pointRadius: 2.5, pointHoverRadius: 3, order: 2 },
       { label: "Your portfolio", data: [{ x: userStats.vol * 100, y: userStats.return * 100 }],
-        backgroundColor: "var(--accent)", borderColor: "var(--accent)", pointRadius: 7, pointHoverRadius: 8, order: 1 },
+        backgroundColor: "#f3f3f1", borderColor: "#f3f3f1", pointRadius: 7, pointHoverRadius: 8, order: 1 },
     ];
     const opts = {
       responsive: true, maintainAspectRatio: false, animation: false,
       plugins: {
-        legend: { display: true, position: "top", labels: { color: "#6b6153", font: { family: "EB Garamond", size: 11 }, boxWidth: 18 } },
+        legend: { display: true, position: "top", labels: { color: "#a8aab0", font: { family: "Geist Mono", size: 11 }, boxWidth: 18 } },
         tooltip: { callbacks: { label: (c) => `vol ${c.parsed.x.toFixed(1)}%, return ${c.parsed.y.toFixed(1)}%` } },
       },
       scales: {
-        x: { title: { display: true, text: "Annualized volatility", color: "#9a8f79", font: { family: "EB Garamond" } },
-          ticks: { color: "#9a8f79", font: { family: "EB Garamond" }, callback: (v) => v + "%" }, grid: { color: "rgba(43,36,26,.06)" } },
-        y: { title: { display: true, text: "Annualized return", color: "#9a8f79", font: { family: "EB Garamond" } },
-          ticks: { color: "#9a8f79", font: { family: "EB Garamond" }, callback: (v) => v + "%" }, grid: { color: "rgba(43,36,26,.08)" } },
+        x: { title: { display: true, text: "Annualized volatility", color: "#8f9199", font: { family: "Geist Mono" } },
+          ticks: { color: "#8f9199", font: { family: "Geist Mono" }, callback: (v) => v + "%" }, grid: { color: "rgba(255,255,255,.06)" } },
+        y: { title: { display: true, text: "Annualized return", color: "#8f9199", font: { family: "Geist Mono" } },
+          ticks: { color: "#8f9199", font: { family: "Geist Mono" }, callback: (v) => v + "%" }, grid: { color: "rgba(255,255,255,.08)" } },
       },
     };
     const ctx = document.getElementById("hs-scatter-chart");
