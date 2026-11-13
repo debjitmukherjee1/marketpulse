@@ -127,7 +127,7 @@ main { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; paddin
 h2 { font: 400 clamp(30px, 4.2vw, 48px)/1.04 var(--display); letter-spacing: -.025em; margin: 0 0 10px; color: var(--ink); }
 h3 { font-family: var(--display); font-weight: 400; letter-spacing: -.015em; color: var(--ink); }
 h4 { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
-.rule { height: 1px; border: 0; margin: 14px 0 22px; background: linear-gradient(90deg, var(--line-2), transparent 80%); }
+hr.rule { height: 1px; border: 0; margin: 14px 0 22px; background: linear-gradient(90deg, var(--line-2), transparent 80%); }
 main p { color: var(--ink-2); max-width: 78ch; }
 main p.muted { color: var(--mute); }
 main li { color: var(--ink-2); margin-bottom: 6px; }
@@ -215,7 +215,7 @@ input[type=range] { accent-color: var(--ink); }
 input[type=date]::-webkit-calendar-picker-indicator { filter: invert(.75); cursor: pointer; }
 input[type=checkbox], input[type=radio] { accent-color: var(--ink); }
 
-.btn, button.btn, a.btn {
+.btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: 42px; padding: 0 20px; border-radius: 999px; text-decoration: none;
   font: 500 13.5px/1 var(--sans); letter-spacing: .005em;
@@ -227,14 +227,14 @@ input[type=checkbox], input[type=radio] { accent-color: var(--ink); }
 .btn:active { transform: scale(.98); }
 .btn:disabled, .btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
 .btn:disabled:hover { background: var(--ink); }
-.btn-outline, .btn.secondary, .btn-ghost {
+.btn-outline, .btn.btn-outline, .btn-secondary, .btn.btn-secondary, .btn.secondary, .btn-ghost {
   display: inline-flex; align-items: center; justify-content: center; height: 42px; padding: 0 20px; border-radius: 999px;
   background: rgba(255, 255, 255, .05); color: var(--ink); border: 1px solid rgba(255, 255, 255, .2);
   font: 500 13.5px/1 var(--sans); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
   -webkit-backdrop-filter: blur(14px) saturate(1.5); backdrop-filter: blur(14px) saturate(1.5);
   transition: background .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease);
 }
-.btn-outline:hover, .btn.secondary:hover, .btn-ghost:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .4); color: var(--ink); }
+.btn-outline:hover, .btn.btn-outline:hover, .btn-secondary:hover, .btn.btn-secondary:hover, .btn.secondary:hover, .btn-ghost:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .4); color: var(--ink); }
 .link-btn { font-family: var(--sans); color: var(--ink); text-decoration-color: var(--line-2); text-underline-offset: 3px; }
 .link-btn:hover { color: var(--ink); text-decoration-color: var(--ink); }
 
