@@ -11,8 +11,8 @@ const state = {
 let priceChart, simChart;
 
 // distinct-enough palette for the 15-way "compare all" overlay
-const PALETTE = ["#963527","#9c6b2e","#b9902f","#266b43","#3f7d5c","#2f6f79",
-  "#3d6a86","#5a5ba8","#7d4f9c","#a84d84","#8a6d3b","#4f7a3a","#b5713a","#556b8d","#93502e"];
+const PALETTE = ["#f3f3f1","#ff6a4a","#3ddc97","#8f7dff","#1fd8c4","#ffb35c",
+  "#6aa9ff","#ff7ab8","#c7e86b","#b48cff","#5ce0e6","#ff9a6a","#9fa3ab","#e8d27a","#7fd1a8"];
 
 // ---- boot -----------------------------------------------------------------
 async function boot() {
@@ -97,8 +97,8 @@ async function loadPriceChart() {
       datasets: [{
         label: idx.name,
         data: s.map(p => p.c),
-        borderColor: "var(--accent)",
-        backgroundColor: "rgba(156,107,46,.12)",
+        borderColor: "#f3f3f1",
+        backgroundColor: "rgba(243,243,241,.12)",
         borderWidth: 2, fill: true, pointRadius: 0, tension: .12,
       }]
     }, false);
@@ -148,12 +148,12 @@ function drawPrice(data, showLegend) {
     interaction: { mode: "index", intersect: false },
     plugins: {
       legend: { display: showLegend, position: "top",
-        labels: { color: "#6b6153", font: { family: "EB Garamond", size: 11 }, boxWidth: 18, usePointStyle: false } },
+        labels: { color: "#a8aab0", font: { family: "Geist Mono", size: 11 }, boxWidth: 18, usePointStyle: false } },
       tooltip: { enabled: true }
     },
     scales: {
-      x: { ticks: { color: "#9a8f79", maxTicksLimit: 8, font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.06)" } },
-      y: { ticks: { color: "#9a8f79", font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.08)" } }
+      x: { ticks: { color: "#8f9199", maxTicksLimit: 8, font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.06)" } },
+      y: { ticks: { color: "#8f9199", font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.08)" } }
     },
     animation: { duration: 500, easing: "easeOutQuart" }
   };
@@ -237,16 +237,16 @@ async function runSimulation() {
 
 function drawSim(res, idx) {
   const labels = Array.from({ length: res.steps + 1 }, (_, i) => i);
-  const faint = "rgba(43,36,26,.10)";
+  const faint = "rgba(255,255,255,.07)";
   const sampleSets = res.samples.map(row => ({
     data: Array.from(row), borderColor: faint, borderWidth: .7,
     pointRadius: 0, fill: false, tension: 0, order: 5 }));
   const datasets = [
-    { label: "95th percentile", data: Array.from(res.p95), borderColor: "var(--bull)",
+    { label: "95th percentile", data: Array.from(res.p95), borderColor: "#3ddc97",
       borderWidth: 1.8, borderDash: [6, 4], pointRadius: 0, fill: false, tension: .1, order: 1 },
-    { label: "Median", data: Array.from(res.p50), borderColor: "var(--accent)",
+    { label: "Median", data: Array.from(res.p50), borderColor: "#f3f3f1",
       borderWidth: 2.4, pointRadius: 0, fill: false, tension: .1, order: 0 },
-    { label: "5th percentile", data: Array.from(res.p5), borderColor: "var(--bear)",
+    { label: "5th percentile", data: Array.from(res.p5), borderColor: "#ff6a4a",
       borderWidth: 1.8, borderDash: [6, 4], pointRadius: 0, fill: false, tension: .1, order: 1 },
     ...sampleSets,
   ];
@@ -257,9 +257,9 @@ function drawSim(res, idx) {
       tooltip: { filter: item => item.datasetIndex < 3 }
     },
     scales: {
-      x: { title: { display: true, text: "Trading days ahead", color: "#9a8f79", font: { family: "EB Garamond" } },
-           ticks: { color: "#9a8f79", maxTicksLimit: 10, font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.06)" } },
-      y: { ticks: { color: "#9a8f79", font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.08)" } }
+      x: { title: { display: true, text: "Trading days ahead", color: "#8f9199", font: { family: "Geist Mono" } },
+           ticks: { color: "#8f9199", maxTicksLimit: 10, font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.06)" } },
+      y: { ticks: { color: "#8f9199", font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.08)" } }
     },
     animation: { duration: 400, easing: "easeOutQuart" }
   };

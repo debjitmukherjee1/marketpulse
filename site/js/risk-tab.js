@@ -25,7 +25,7 @@
   const fmtPct1 = (n) => (n >= 0 ? "+" : "") + (n * 100).toFixed(1) + "%";
 
   // Canvas 2D cannot resolve CSS custom properties (ctx.strokeStyle =
-  // "var(--accent)" silently falls back to black) — unlike a DOM element's
+  // "#f3f3f1" silently falls back to black) — unlike a DOM element's
   // style, a bare string handed to the canvas API has no cascade to resolve
   // against. Chart.js just forwards whatever string it's given straight to
   // the canvas context, so its color options need an already-resolved hex.
@@ -148,15 +148,15 @@
   }
 
   // house diverging scale: bear (negative) <-> surface-2 (zero) <-> bull (positive)
-  const CORR_BEAR = [150, 53, 39];
-  const CORR_NEUTRAL = [243, 236, 220];
-  const CORR_BULL = [38, 107, 67];
+  const CORR_BEAR = [255, 90, 54];
+  const CORR_NEUTRAL = [23, 23, 26];
+  const CORR_BULL = [61, 220, 151];
   function corrCellColor(v) {
     const t = Math.min(1, Math.abs(v));
     const pole = v < 0 ? CORR_BEAR : CORR_BULL;
     const rgb = CORR_NEUTRAL.map((c, i) => Math.round(c + (pole[i] - c) * t));
     const lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-    return { css: `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`, text: lum > 0.6 ? "var(--ink)" : "#fff" };
+    return { css: `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`, text: lum > 0.5 ? "#050505" : "#f3f3f1" };
   }
 
   function getTooltip() {
@@ -296,8 +296,8 @@
         tooltip: { enabled: showLegend, callbacks: { label: (c) => `${c.dataset.label}: ${fmtPct1(c.parsed.y)}` } },
       },
       scales: {
-        x: { display: showLegend, ticks: { color: "#9a8f79", maxTicksLimit: 8, font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.06)" } },
-        y: { display: showLegend, ticks: { color: "#9a8f79", font: { family: "EB Garamond" }, callback: (v) => (v * 100).toFixed(0) + "%" }, grid: { color: "rgba(43,36,26,.08)" } },
+        x: { display: showLegend, ticks: { color: "#8f9199", maxTicksLimit: 8, font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.06)" } },
+        y: { display: showLegend, ticks: { color: "#8f9199", font: { family: "Geist Mono" }, callback: (v) => (v * 100).toFixed(0) + "%" }, grid: { color: "rgba(255,255,255,.08)" } },
       },
       animation: { duration: showLegend ? 400 : 0 },
     };
@@ -422,7 +422,7 @@
     // return <= -varThreshold) are shaded as the loss tail the VaR describes.
     const colors = counts.map((_, i) => {
       const binUpper = min + width * (i + 1);
-      return binUpper <= -varThreshold ? "rgba(150,53,39,.55)" : "rgba(156,107,46,.55)";
+      return binUpper <= -varThreshold ? "rgba(255,106,74,.55)" : "rgba(243,243,241,.55)";
     });
     const data = { labels, datasets: [{ label: "Days", data: counts, backgroundColor: colors, borderWidth: 0 }] };
     const opts = {
@@ -432,10 +432,10 @@
         tooltip: { callbacks: { label: (c) => `${c.parsed.y} day${c.parsed.y === 1 ? "" : "s"}` } },
       },
       scales: {
-        x: { title: { display: true, text: "Daily portfolio return", color: "#9a8f79", font: { family: "EB Garamond" } },
-          ticks: { color: "#9a8f79", maxTicksLimit: 10, font: { family: "EB Garamond" } }, grid: { display: false } },
-        y: { title: { display: true, text: "Days", color: "#9a8f79", font: { family: "EB Garamond" } },
-          ticks: { color: "#9a8f79", font: { family: "EB Garamond" } }, grid: { color: "rgba(43,36,26,.08)" } },
+        x: { title: { display: true, text: "Daily portfolio return", color: "#8f9199", font: { family: "Geist Mono" } },
+          ticks: { color: "#8f9199", maxTicksLimit: 10, font: { family: "Geist Mono" } }, grid: { display: false } },
+        y: { title: { display: true, text: "Days", color: "#8f9199", font: { family: "Geist Mono" } },
+          ticks: { color: "#8f9199", font: { family: "Geist Mono" } }, grid: { color: "rgba(255,255,255,.08)" } },
       },
       animation: { duration: 350, easing: "easeOutQuart" },
     };
